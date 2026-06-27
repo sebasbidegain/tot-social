@@ -9,7 +9,7 @@ import {
 } from '../api/friends';
 import type { PaginatedResponse } from '../types';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
-import { Skeleton, SearchResultSkeleton } from '../components/ui/Skeleton';
+import { SearchResultSkeleton } from '../components/ui/Skeleton';
 import { timeAgo } from '../utils/formatDate';
 
 type Tab = 'friends' | 'received' | 'sent';

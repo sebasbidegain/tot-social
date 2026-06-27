@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import type { Conversation, Message, PaginatedResponse } from '../types';
 import { getConversations, getMessages, sendMessage } from '../api/messages';
 import { useAuth } from '../contexts/AuthContext';
