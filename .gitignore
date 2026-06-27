@@ -1,0 +1,9 @@
+node_modules/
+.env
+dist/
+uploads/images/*
+uploads/videos/*
+uploads/thumbnails/*
+!uploads/**/.gitkeep
+*.pem
+*.log
