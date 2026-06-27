@@ -1,0 +1,7 @@
+PassengerAppRoot /home/u958893527/domains/tot-social.com/public_html/backend
+PassengerAppType node
+PassengerNodejs /opt/alt/alt-nodejs20/root/bin/node
+PassengerStartupFile src/index.js
+PassengerBaseURI /
+PassengerRestartDir /home/u958893527/domains/tot-social.com/public_html/backend/tmp
+SetEnv LSNODE_CONSOLE_LOG console.log
