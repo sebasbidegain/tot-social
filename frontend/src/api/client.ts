@@ -33,7 +33,8 @@ client.interceptors.response.use(
   async (error) => {
     const original = error.config;
 
-    if (error.response?.status === 401 && error.response?.data?.code === 'TOKEN_EXPIRED' && !original._retry) {
+    const code = error.response?.data?.code;
+    if (error.response?.status === 401 && (code === 'TOKEN_EXPIRED' || code === 'INVALID_TOKEN') && !original._retry) {
       original._retry = true;
 
       if (isRefreshing) {
