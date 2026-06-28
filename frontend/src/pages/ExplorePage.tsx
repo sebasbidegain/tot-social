@@ -9,6 +9,7 @@ import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import ThoughtCard from '../components/thought/ThoughtCard';
 import { FeedSkeleton } from '../components/ui/Skeleton';
 import AdBanner from '../components/AdBanner';
+import { AD_SLOTS } from '../config/ads';
 
 type Tab = 'explore' | 'trending';
 
@@ -89,7 +90,7 @@ export default function ExplorePage() {
             {thoughts.map((t, i) => (
               <div key={t.id}>
                 <ThoughtCard thought={t} currentUserId={user?.id} />
-                {(i + 1) % 5 === 0 && <AdBanner slot="EXPLORE_SLOT_1" className="my-4" />}
+                {(i + 1) % 5 === 0 && <AdBanner slot={AD_SLOTS.exploreInline} className="my-4" />}
               </div>
             ))}
           </div>

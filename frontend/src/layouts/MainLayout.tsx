@@ -5,6 +5,7 @@ import { getPendingCount } from '../api/friends';
 import { getUnreadCount as getNotifUnread } from '../api/notifications';
 import { getUnreadCount as getMsgUnread } from '../api/messages';
 import AdBanner from '../components/AdBanner';
+import { AD_SLOTS } from '../config/ads';
 
 export default function MainLayout() {
   const { user, logout } = useAuth();
@@ -98,8 +99,8 @@ export default function MainLayout() {
         </main>
         <aside className="hidden lg:block w-[300px] shrink-0">
           <div className="sticky top-20">
-            <AdBanner slot="SIDEBAR_SLOT_1" format="rectangle" className="mb-4" />
-            <AdBanner slot="SIDEBAR_SLOT_2" format="rectangle" />
+            <AdBanner slot={AD_SLOTS.sidebarTop} format="rectangle" className="mb-4" />
+            <AdBanner slot={AD_SLOTS.sidebarBottom} format="rectangle" />
           </div>
         </aside>
       </div>

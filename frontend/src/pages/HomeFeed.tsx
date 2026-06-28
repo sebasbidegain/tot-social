@@ -7,6 +7,7 @@ import ThoughtCard from '../components/thought/ThoughtCard';
 import ComposeForm from '../components/thought/ComposeForm';
 import { FeedSkeleton } from '../components/ui/Skeleton';
 import AdBanner from '../components/AdBanner';
+import { AD_SLOTS } from '../config/ads';
 
 export default function HomeFeed() {
   const { user } = useAuth();
@@ -77,7 +78,7 @@ export default function HomeFeed() {
         {thoughts.map((t, i) => (
           <div key={t.id}>
             <ThoughtCard thought={t} currentUserId={user?.id} onDelete={handleDelete} />
-            {(i + 1) % 5 === 0 && <AdBanner slot="FEED_SLOT_1" className="my-4" />}
+            {(i + 1) % 5 === 0 && <AdBanner slot={AD_SLOTS.feedInline} className="my-4" />}
           </div>
         ))}
       </div>

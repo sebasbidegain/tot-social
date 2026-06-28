@@ -12,6 +12,7 @@ import { ProfileSkeleton } from '../components/ui/Skeleton';
 import FriendButton from '../components/FriendButton';
 import { formatDate } from '../utils/formatDate';
 import AdBanner from '../components/AdBanner';
+import { AD_SLOTS } from '../config/ads';
 
 export default function ProfilePage() {
   const { username } = useParams<{ username: string }>();
@@ -155,13 +156,13 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <AdBanner slot="PROFILE_SLOT_1" format="horizontal" className="mb-4" />
+      <AdBanner slot={AD_SLOTS.profileTop} className="mb-4" />
 
       <div className="space-y-4">
         {thoughts.map((t, i) => (
           <div key={t.id}>
             <ThoughtCard thought={t} currentUserId={currentUser?.id} />
-            {(i + 1) % 5 === 0 && <AdBanner slot="PROFILE_SLOT_2" className="my-4" />}
+            {(i + 1) % 5 === 0 && <AdBanner slot={AD_SLOTS.profileInline} className="my-4" />}
           </div>
         ))}
       </div>
