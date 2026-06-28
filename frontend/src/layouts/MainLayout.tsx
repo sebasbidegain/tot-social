@@ -92,8 +92,8 @@ export default function MainLayout() {
       </header>
 
       {/* Main content with sidebar ad */}
-      <div className="max-w-6xl mx-auto px-4 py-6 pb-20 md:pb-6 flex gap-6">
-        <main className="flex-1 max-w-2xl mx-auto min-w-0">
+      <div className="max-w-6xl mx-auto px-4 py-6 pb-20 md:pb-6 lg:flex lg:justify-center lg:gap-6">
+        <main className="w-full max-w-2xl min-w-0">
           <Outlet />
         </main>
         <aside className="hidden lg:block w-[300px] shrink-0">
