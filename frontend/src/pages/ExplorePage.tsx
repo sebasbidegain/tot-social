@@ -8,6 +8,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import ThoughtCard from '../components/thought/ThoughtCard';
 import { FeedSkeleton } from '../components/ui/Skeleton';
+import AdBanner from '../components/AdBanner';
 
 type Tab = 'explore' | 'trending';
 
@@ -85,8 +86,11 @@ export default function ExplorePage() {
       ) : (
         <>
           <div className="space-y-4">
-            {thoughts.map(t => (
-              <ThoughtCard key={t.id} thought={t} currentUserId={user?.id} />
+            {thoughts.map((t, i) => (
+              <div key={t.id}>
+                <ThoughtCard thought={t} currentUserId={user?.id} />
+                {(i + 1) % 5 === 0 && <AdBanner slot="EXPLORE_SLOT_1" className="my-4" />}
+              </div>
             ))}
           </div>
           <div ref={sentinelRef} className="py-4 text-center">

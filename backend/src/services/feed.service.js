@@ -17,7 +17,7 @@ async function getFeed(userId, cursor, limit) {
        AND t.id < ?
      ORDER BY t.id DESC
      LIMIT ?`,
-    [userId, userId, userId, userId, userId, userId, userId, cursor, limit]
+    [...thoughtsService.userParams(userId), userId, userId, userId, userId, userId, cursor, limit]
   );
 
   await thoughtsService.attachMedia(rows);

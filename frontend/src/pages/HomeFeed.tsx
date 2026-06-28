@@ -6,6 +6,7 @@ import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import ThoughtCard from '../components/thought/ThoughtCard';
 import ComposeForm from '../components/thought/ComposeForm';
 import { FeedSkeleton } from '../components/ui/Skeleton';
+import AdBanner from '../components/AdBanner';
 
 export default function HomeFeed() {
   const { user } = useAuth();
@@ -73,8 +74,11 @@ export default function HomeFeed() {
       <ComposeForm onCreated={handleCreated} />
 
       <div className="space-y-4">
-        {thoughts.map(t => (
-          <ThoughtCard key={t.id} thought={t} currentUserId={user?.id} onDelete={handleDelete} />
+        {thoughts.map((t, i) => (
+          <div key={t.id}>
+            <ThoughtCard thought={t} currentUserId={user?.id} onDelete={handleDelete} />
+            {(i + 1) % 5 === 0 && <AdBanner slot="FEED_SLOT_1" className="my-4" />}
+          </div>
         ))}
       </div>
 

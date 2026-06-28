@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { getPendingCount } from '../api/friends';
 import { getUnreadCount as getNotifUnread } from '../api/notifications';
 import { getUnreadCount as getMsgUnread } from '../api/messages';
+import AdBanner from '../components/AdBanner';
 
 export default function MainLayout() {
   const { user, logout } = useAuth();
@@ -90,10 +91,18 @@ export default function MainLayout() {
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="max-w-2xl mx-auto px-4 py-6 pb-20 md:pb-6">
-        <Outlet />
-      </main>
+      {/* Main content with sidebar ad */}
+      <div className="max-w-6xl mx-auto px-4 py-6 pb-20 md:pb-6 flex gap-6">
+        <main className="flex-1 max-w-2xl mx-auto min-w-0">
+          <Outlet />
+        </main>
+        <aside className="hidden lg:block w-[300px] shrink-0">
+          <div className="sticky top-20">
+            <AdBanner slot="SIDEBAR_SLOT_1" format="rectangle" className="mb-4" />
+            <AdBanner slot="SIDEBAR_SLOT_2" format="rectangle" />
+          </div>
+        </aside>
+      </div>
 
       {/* Mobile bottom nav */}
       <nav className="fixed bottom-0 inset-x-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 md:hidden">

@@ -11,6 +11,7 @@ import ThoughtCard from '../components/thought/ThoughtCard';
 import { ProfileSkeleton } from '../components/ui/Skeleton';
 import FriendButton from '../components/FriendButton';
 import { formatDate } from '../utils/formatDate';
+import AdBanner from '../components/AdBanner';
 
 export default function ProfilePage() {
   const { username } = useParams<{ username: string }>();
@@ -154,9 +155,14 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      <AdBanner slot="PROFILE_SLOT_1" format="horizontal" className="mb-4" />
+
       <div className="space-y-4">
-        {thoughts.map(t => (
-          <ThoughtCard key={t.id} thought={t} currentUserId={currentUser?.id} />
+        {thoughts.map((t, i) => (
+          <div key={t.id}>
+            <ThoughtCard thought={t} currentUserId={currentUser?.id} />
+            {(i + 1) % 5 === 0 && <AdBanner slot="PROFILE_SLOT_2" className="my-4" />}
+          </div>
         ))}
       </div>
 
