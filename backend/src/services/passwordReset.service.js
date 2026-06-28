@@ -7,6 +7,10 @@ const { NotFoundError, ValidationError } = require('../utils/errors');
 
 const RESET_EXPIRY_HOURS = 1;
 
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 async function requestReset(email) {
   const [rows] = await db.query('SELECT id, username FROM users WHERE email = ? AND is_active = 1', [email]);
   if (rows.length === 0) return;
@@ -31,7 +35,7 @@ async function requestReset(email) {
     subject: 'ToT - Reset Your Password',
     html: `
       <h2>Password Reset</h2>
-      <p>Hi ${user.username},</p>
+      <p>Hi ${escapeHtml(user.username)},</p>
       <p>You requested a password reset. Click the link below to set a new password:</p>
       <p><a href="${resetUrl}">${resetUrl}</a></p>
       <p>This link expires in ${RESET_EXPIRY_HOURS} hour(s).</p>
@@ -91,7 +95,7 @@ async function sendVerificationEmail(userId) {
     subject: 'ToT - Verify Your Email',
     html: `
       <h2>Email Verification</h2>
-      <p>Hi ${user.username},</p>
+      <p>Hi ${escapeHtml(user.username)},</p>
       <p>Click the link below to verify your email address:</p>
       <p><a href="${verifyUrl}">${verifyUrl}</a></p>
       <p>This link expires in 24 hours.</p>

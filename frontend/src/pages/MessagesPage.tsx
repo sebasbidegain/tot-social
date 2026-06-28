@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import type { Conversation, Message, PaginatedResponse } from '../types';
 import { getConversations, getMessages, sendMessage } from '../api/messages';
@@ -9,9 +10,12 @@ import { timeAgo } from '../utils/formatDate';
 export default function MessagesPage() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeConvId, setActiveConvId] = useState<number | null>(null);
   const [newMessage, setNewMessage] = useState('');
   const [sending, setSending] = useState(false);
+  const targetUserId = searchParams.get('user') ? Number(searchParams.get('user')) : null;
+  const didAutoOpen = useRef(false);
 
   const { data: convData, isLoading: convsLoading } = useInfiniteQuery<PaginatedResponse<Conversation>>({
     queryKey: ['conversations'],
@@ -23,12 +27,28 @@ export default function MessagesPage() {
   const conversations = convData?.pages.flatMap(p => p.data) ?? [];
   const activeConv = conversations.find(c => c.id === activeConvId);
 
+  // Auto-open conversation when ?user= query param is present
+  useEffect(() => {
+    if (!targetUserId || didAutoOpen.current || convsLoading) return;
+    const existing = conversations.find(c => c.other_user.id === targetUserId);
+    if (existing) {
+      setActiveConvId(existing.id);
+      didAutoOpen.current = true;
+      // Clean up the query param so it doesn't re-trigger
+      setSearchParams({}, { replace: true });
+    } else if (conversations.length >= 0 && !convsLoading) {
+      // No existing conversation — set a placeholder so the view opens in "new conversation" mode
+      setActiveConvId(-1);
+      didAutoOpen.current = true;
+    }
+  }, [targetUserId, conversations, convsLoading, setSearchParams]);
+
   const { data: messagesData, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<PaginatedResponse<Message>>({
     queryKey: ['messages', activeConvId],
     queryFn: ({ pageParam }) => getMessages(activeConvId!, pageParam as number | undefined),
     initialPageParam: undefined as number | undefined,
     getNextPageParam: (last) => last.pagination.has_more ? (last.pagination.next_cursor ?? undefined) : undefined,
-    enabled: !!activeConvId,
+    enabled: !!activeConvId && activeConvId !== -1,
     refetchInterval: 5000,
   });
 
@@ -40,20 +60,32 @@ export default function MessagesPage() {
     isFetchingNextPage
   );
 
+  const isNewConversation = activeConvId === -1 && !!targetUserId;
+
   async function handleSend() {
-    if (!newMessage.trim() || !activeConv || sending) return;
+    const recipientId = isNewConversation ? targetUserId : activeConv?.other_user.id;
+    if (!newMessage.trim() || !recipientId || sending) return;
     setSending(true);
     try {
-      await sendMessage(activeConv.other_user.id, newMessage.trim());
+      await sendMessage(recipientId, newMessage.trim());
       setNewMessage('');
+      // Clean up query param if present
+      if (targetUserId) setSearchParams({}, { replace: true });
+      // Refetch conversations so the new one appears
+      await queryClient.invalidateQueries({ queryKey: ['conversations'] });
       queryClient.invalidateQueries({ queryKey: ['messages', activeConvId] });
-      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      // If this was a new conversation, find it and switch to it
+      if (isNewConversation) {
+        const freshConvs = await getConversations();
+        const created = freshConvs.data.find((c: Conversation) => c.other_user.id === recipientId);
+        if (created) setActiveConvId(created.id);
+      }
     } finally { setSending(false); }
   }
 
   if (convsLoading) return <div className="animate-pulse space-y-3">{Array.from({ length: 4 }, (_, i) => <div key={i} className="h-16 bg-gray-200 dark:bg-gray-700 rounded-lg" />)}</div>;
 
-  if (!activeConvId) {
+  if (!activeConvId || (activeConvId !== -1 && !activeConv)) {
     return (
       <div>
         <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Messages</h1>
@@ -99,10 +131,10 @@ export default function MessagesPage() {
   return (
     <div className="flex flex-col h-[calc(100vh-7rem)]">
       <div className="flex items-center gap-3 pb-3 border-b border-gray-200 dark:border-gray-700">
-        <button onClick={() => setActiveConvId(null)} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+        <button onClick={() => { setActiveConvId(null); didAutoOpen.current = false; if (targetUserId) setSearchParams({}, { replace: true }); }} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
           ← Back
         </button>
-        <span className="font-medium text-gray-900 dark:text-white">{activeConv?.other_user.display_name}</span>
+        <span className="font-medium text-gray-900 dark:text-white">{activeConv?.other_user.display_name ?? 'New conversation'}</span>
       </div>
 
       <div className="flex-1 overflow-y-auto py-4 space-y-3 flex flex-col-reverse">
@@ -128,6 +160,7 @@ export default function MessagesPage() {
           onChange={e => setNewMessage(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleSend()}
           placeholder="Type a message..."
+          maxLength={5000}
           className="flex-1 rounded-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
         <button

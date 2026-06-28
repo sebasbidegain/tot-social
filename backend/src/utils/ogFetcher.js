@@ -1,16 +1,48 @@
+const dns = require('dns/promises');
+const net = require('net');
+
 const OG_TIMEOUT = 5000;
+
+const BLOCKED_RANGES = [
+  /^127\./, /^10\./, /^172\.(1[6-9]|2\d|3[01])\./, /^192\.168\./,
+  /^0\./, /^169\.254\./, /^::1$/, /^fc00/i, /^fe80/i, /^fd/i,
+];
+
+function isPrivateIP(ip) {
+  return BLOCKED_RANGES.some(r => r.test(ip));
+}
+
+async function isSafeUrl(urlStr) {
+  let parsed;
+  try { parsed = new URL(urlStr); } catch { return false; }
+  if (!['http:', 'https:'].includes(parsed.protocol)) return false;
+  if (['localhost', '0.0.0.0', '[::1]'].includes(parsed.hostname)) return false;
+  if (net.isIP(parsed.hostname)) return !isPrivateIP(parsed.hostname);
+  try {
+    const { address } = await dns.lookup(parsed.hostname);
+    return !isPrivateIP(address);
+  } catch { return false; }
+}
 
 async function fetchOgData(url) {
   try {
+    if (!await isSafeUrl(url)) return null;
+
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), OG_TIMEOUT);
 
     const res = await fetch(url, {
       signal: controller.signal,
       headers: { 'User-Agent': 'ToT-Bot/1.0 (link preview)' },
-      redirect: 'follow',
+      redirect: 'manual',
     });
     clearTimeout(timer);
+
+    if ([301, 302, 303, 307, 308].includes(res.status)) {
+      const location = res.headers.get('location');
+      if (!location || !await isSafeUrl(location)) return null;
+      return fetchOgData(location);
+    }
 
     if (!res.ok) return null;
 

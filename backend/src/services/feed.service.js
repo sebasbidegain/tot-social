@@ -49,6 +49,8 @@ async function getExploreFeed(cursor, limit, currentUserId = null) {
 }
 
 async function searchThoughts(query, cursor, limit, currentUserId = null) {
+  query = query.replace(/[+\-<>()~*"@]/g, ' ').trim();
+  if (!query) return [];
   const [rows] = await db.query(
     `SELECT ${thoughtsService.buildThoughtSelect(currentUserId)}
      FROM thoughts t

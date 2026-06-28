@@ -93,19 +93,19 @@ export default function ProfilePage() {
 
   return (
     <div>
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
         <div className="flex items-start gap-4">
           {profile.avatar_url ? (
             <img src={profile.avatar_url} alt="" className="w-20 h-20 rounded-full object-cover" loading="lazy" />
           ) : (
             <div className="w-20 h-20 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-2xl">
-              {profile.display_name[0]?.toUpperCase()}
+              {(profile.display_name || profile.username)[0]?.toUpperCase()}
             </div>
           )}
           <div className="flex-1">
-            <h1 className="text-xl font-bold text-gray-900">{profile.display_name}</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">{profile.display_name}</h1>
             <p className="text-gray-500">@{profile.username}</p>
-            {profile.bio && <p className="text-gray-700 mt-2">{profile.bio}</p>}
+            {profile.bio && <p className="text-gray-700 dark:text-gray-300 mt-2">{profile.bio}</p>}
             <p className="text-xs text-gray-400 mt-1">Joined {formatDate(profile.created_at)}</p>
           </div>
           {!isOwnProfile && currentUser && (

@@ -7,3 +7,6 @@ uploads/thumbnails/*
 !uploads/**/.gitkeep
 *.pem
 *.log
+*.apk
+frontend/android/
+

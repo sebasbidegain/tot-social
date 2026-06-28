@@ -29,7 +29,8 @@ async function refreshToken(req, res, next) {
 async function logout(req, res, next) {
   try {
     const { refreshToken } = req.body;
-    if (refreshToken) await tokenService.revokeToken(refreshToken);
+    if (!refreshToken) return res.status(400).json({ error: 'Refresh token required' });
+    await tokenService.revokeToken(refreshToken);
     res.json({ message: 'Logged out' });
   } catch (err) { next(err); }
 }

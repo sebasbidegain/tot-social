@@ -26,13 +26,16 @@ router.post('/reset-password', rateLimiter.auth, async (req, res, next) => {
   try {
     const { token, password } = req.body;
     if (!token || !password) return res.status(400).json({ error: 'Token and password required' });
-    if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    if (password.length < 8 || password.length > 128) return res.status(400).json({ error: 'Password must be 8-128 characters' });
+    if (!/[a-z]/.test(password)) return res.status(400).json({ error: 'Password must contain a lowercase letter' });
+    if (!/[A-Z]/.test(password)) return res.status(400).json({ error: 'Password must contain an uppercase letter' });
+    if (!/\d/.test(password)) return res.status(400).json({ error: 'Password must contain a digit' });
     await passwordResetService.resetPassword(token, password);
     res.json({ message: 'Password has been reset. Please log in.' });
   } catch (err) { next(err); }
 });
 
-router.post('/send-verification', auth, async (req, res, next) => {
+router.post('/send-verification', auth, rateLimiter.auth, async (req, res, next) => {
   try {
     await passwordResetService.sendVerificationEmail(req.userId);
     res.json({ message: 'Verification email sent.' });

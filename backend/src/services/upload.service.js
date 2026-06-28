@@ -31,7 +31,10 @@ async function validateAndProcessImage(filePath) {
 }
 
 async function validateVideo(filePath) {
-  const buffer = await fs.readFile(filePath, { length: 4100 });
+  const fh = await fs.open(filePath, 'r');
+  const buffer = Buffer.alloc(4100);
+  await fh.read(buffer, 0, 4100, 0);
+  await fh.close();
 
   const { fileTypeFromBuffer } = await import('file-type');
   const type = await fileTypeFromBuffer(buffer);

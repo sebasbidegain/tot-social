@@ -34,6 +34,7 @@ export default function ComposeForm({ onCreated, parentThoughtId, quotedThoughtI
       return;
     }
 
+    previews.forEach(p => URL.revokeObjectURL(p));
     setFiles(newFiles);
     setPreviews(newFiles.map(f => URL.createObjectURL(f)));
     setError('');

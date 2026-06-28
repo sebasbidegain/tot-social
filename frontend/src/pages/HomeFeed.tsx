@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import type { Thought, PaginatedResponse } from '../types';
-import { getFeed } from '../api/thoughts';
+import { getFeed, deleteThought } from '../api/thoughts';
 import { useAuth } from '../contexts/AuthContext';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 import ThoughtCard from '../components/thought/ThoughtCard';
@@ -17,6 +17,8 @@ export default function HomeFeed() {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
+    isError,
+    refetch,
   } = useInfiniteQuery<PaginatedResponse<Thought>>({
     queryKey: ['feed'],
     queryFn: ({ pageParam }) => getFeed(pageParam as number | undefined),
@@ -37,7 +39,7 @@ export default function HomeFeed() {
     queryClient.invalidateQueries({ queryKey: ['feed'] });
   }
 
-  function handleDelete(id: number) {
+  async function handleDelete(id: number) {
     queryClient.setQueryData<{ pages: PaginatedResponse<Thought>[]; pageParams: unknown[] }>(
       ['feed'],
       (old) => {
@@ -51,9 +53,20 @@ export default function HomeFeed() {
         };
       }
     );
+    try {
+      await deleteThought(id);
+    } catch {
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
+    }
   }
 
   if (isLoading) return <FeedSkeleton count={4} />;
+  if (isError) return (
+    <div className="text-center py-12">
+      <p className="text-red-500 mb-2">Failed to load feed</p>
+      <button onClick={() => refetch()} className="text-indigo-600 hover:underline text-sm">Try again</button>
+    </div>
+  );
 
   return (
     <div>

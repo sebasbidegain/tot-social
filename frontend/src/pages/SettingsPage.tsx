@@ -90,7 +90,7 @@ export default function SettingsPage() {
 
       {/* Avatar */}
       <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-        <h2 className="font-medium mb-3">Avatar</h2>
+        <h2 className="font-medium text-gray-900 dark:text-white mb-3">Avatar</h2>
         <div className="flex items-center gap-4">
           {user?.avatar_url ? (
             <img src={user.avatar_url} alt="" className="w-16 h-16 rounded-full object-cover" />
@@ -108,16 +108,16 @@ export default function SettingsPage() {
 
       {/* Profile */}
       <form onSubmit={handleProfileUpdate} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 space-y-4">
-        <h2 className="font-medium">Profile</h2>
+        <h2 className="font-medium text-gray-900 dark:text-white">Profile</h2>
         <div>
-          <label className="block text-sm text-gray-700 mb-1">Display Name</label>
-          <input value={displayName} onChange={e => setDisplayName(e.target.value)} maxLength={100}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+          <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">Display Name</label>
+          <input value={displayName} onChange={e => setDisplayName(e.target.value)} maxLength={100} required
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
         </div>
         <div>
-          <label className="block text-sm text-gray-700 mb-1">Bio</label>
+          <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">Bio</label>
           <textarea value={bio} onChange={e => setBio(e.target.value)} maxLength={500} rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none" />
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none" />
         </div>
         <button type="submit" disabled={saving}
           className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-50">
@@ -127,16 +127,16 @@ export default function SettingsPage() {
 
       {/* Password */}
       <form onSubmit={handlePasswordChange} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 space-y-4">
-        <h2 className="font-medium">Change Password</h2>
+        <h2 className="font-medium text-gray-900 dark:text-white">Change Password</h2>
         <div>
-          <label className="block text-sm text-gray-700 mb-1">Current Password</label>
+          <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">Current Password</label>
           <input type="password" value={currentPw} onChange={e => setCurrentPw(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" required />
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" required autoComplete="current-password" />
         </div>
         <div>
-          <label className="block text-sm text-gray-700 mb-1">New Password</label>
+          <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">New Password</label>
           <input type="password" value={newPw} onChange={e => setNewPw(e.target.value)} minLength={8}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" required />
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" required autoComplete="new-password" />
         </div>
         <button type="submit" disabled={saving}
           className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50">

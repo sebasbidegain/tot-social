@@ -25,10 +25,10 @@ export default function FriendsPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-900 mb-4">Friends</h1>
+      <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Friends</h1>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-gray-100 rounded-lg p-1">
+      <div className="flex gap-1 mb-6 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
         {([
           { key: 'friends' as Tab, label: 'My Friends' },
           { key: 'received' as Tab, label: `Requests${pendingCount > 0 ? ` (${pendingCount})` : ''}` },
@@ -38,7 +38,7 @@ export default function FriendsPage() {
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
-              tab === t.key ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+              tab === t.key ? 'bg-white dark:bg-gray-700 text-indigo-600 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
             }`}
           >
             {t.label}
@@ -72,8 +72,10 @@ function FriendsList() {
   );
 
   async function handleUnfriend(userId: number) {
-    await unfriend(userId);
-    queryClient.invalidateQueries({ queryKey: ['friends'] });
+    try {
+      await unfriend(userId);
+      queryClient.invalidateQueries({ queryKey: ['friends'] });
+    } catch { /* ignore */ }
   }
 
   if (isLoading) return <SearchResultSkeleton count={3} />;
@@ -86,7 +88,7 @@ function FriendsList() {
     <>
       <div className="space-y-2">
         {friends.map(f => (
-          <div key={f.id} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200">
+          <div key={f.id} className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
             <Link to={`/profile/${f.user.username}`}>
               {f.user.avatar_url ? (
                 <img src={f.user.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" loading="lazy" width={40} height={40} />
@@ -97,7 +99,7 @@ function FriendsList() {
               )}
             </Link>
             <div className="flex-1 min-w-0">
-              <Link to={`/profile/${f.user.username}`} className="font-medium text-gray-900 hover:underline">
+              <Link to={`/profile/${f.user.username}`} className="font-medium text-gray-900 dark:text-white hover:underline">
                 {f.user.display_name}
               </Link>
               <p className="text-sm text-gray-500">@{f.user.username}</p>
@@ -135,16 +137,20 @@ function ReceivedList({ queryClient }: { queryClient: ReturnType<typeof useQuery
   );
 
   async function handleAccept(senderId: number) {
-    await acceptFriendRequest(senderId);
-    queryClient.invalidateQueries({ queryKey: ['friendRequests'] });
-    queryClient.invalidateQueries({ queryKey: ['friends'] });
-    queryClient.invalidateQueries({ queryKey: ['friendsPendingCount'] });
+    try {
+      await acceptFriendRequest(senderId);
+      queryClient.invalidateQueries({ queryKey: ['friendRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['friends'] });
+      queryClient.invalidateQueries({ queryKey: ['friendsPendingCount'] });
+    } catch { /* ignore */ }
   }
 
   async function handleReject(senderId: number) {
-    await rejectFriendRequest(senderId);
-    queryClient.invalidateQueries({ queryKey: ['friendRequests'] });
-    queryClient.invalidateQueries({ queryKey: ['friendsPendingCount'] });
+    try {
+      await rejectFriendRequest(senderId);
+      queryClient.invalidateQueries({ queryKey: ['friendRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['friendsPendingCount'] });
+    } catch { /* ignore */ }
   }
 
   if (isLoading) return <SearchResultSkeleton count={3} />;
@@ -157,7 +163,7 @@ function ReceivedList({ queryClient }: { queryClient: ReturnType<typeof useQuery
     <>
       <div className="space-y-2">
         {requests.map(r => (
-          <div key={r.id} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200">
+          <div key={r.id} className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
             <Link to={`/profile/${r.user.username}`}>
               {r.user.avatar_url ? (
                 <img src={r.user.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" loading="lazy" width={40} height={40} />
@@ -168,7 +174,7 @@ function ReceivedList({ queryClient }: { queryClient: ReturnType<typeof useQuery
               )}
             </Link>
             <div className="flex-1 min-w-0">
-              <Link to={`/profile/${r.user.username}`} className="font-medium text-gray-900 hover:underline">
+              <Link to={`/profile/${r.user.username}`} className="font-medium text-gray-900 dark:text-white hover:underline">
                 {r.user.display_name}
               </Link>
               <p className="text-xs text-gray-400">{timeAgo(r.created_at)}</p>
@@ -214,8 +220,10 @@ function SentList({ queryClient }: { queryClient: ReturnType<typeof useQueryClie
   );
 
   async function handleCancel(receiverId: number) {
-    await cancelFriendRequest(receiverId);
-    queryClient.invalidateQueries({ queryKey: ['friendRequests'] });
+    try {
+      await cancelFriendRequest(receiverId);
+      queryClient.invalidateQueries({ queryKey: ['friendRequests'] });
+    } catch { /* ignore */ }
   }
 
   if (isLoading) return <SearchResultSkeleton count={3} />;
@@ -228,7 +236,7 @@ function SentList({ queryClient }: { queryClient: ReturnType<typeof useQueryClie
     <>
       <div className="space-y-2">
         {requests.map(r => (
-          <div key={r.id} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200">
+          <div key={r.id} className="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
             <Link to={`/profile/${r.user.username}`}>
               {r.user.avatar_url ? (
                 <img src={r.user.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover" loading="lazy" width={40} height={40} />
@@ -239,7 +247,7 @@ function SentList({ queryClient }: { queryClient: ReturnType<typeof useQueryClie
               )}
             </Link>
             <div className="flex-1 min-w-0">
-              <Link to={`/profile/${r.user.username}`} className="font-medium text-gray-900 hover:underline">
+              <Link to={`/profile/${r.user.username}`} className="font-medium text-gray-900 dark:text-white hover:underline">
                 {r.user.display_name}
               </Link>
               <p className="text-xs text-gray-400">Sent {timeAgo(r.created_at)}</p>

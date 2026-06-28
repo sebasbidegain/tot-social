@@ -75,7 +75,12 @@ export default function ExplorePage() {
         </div>
       )}
 
-      {current.isLoading ? (
+      {current.isError ? (
+        <div className="text-center py-12">
+          <p className="text-red-500 mb-2">Failed to load content</p>
+          <button onClick={() => current.refetch()} className="text-indigo-600 hover:underline text-sm">Try again</button>
+        </div>
+      ) : current.isLoading ? (
         <FeedSkeleton count={4} />
       ) : (
         <>

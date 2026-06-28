@@ -18,7 +18,7 @@ export default function HashtagPage() {
     setLoading(true);
     try {
       const res = await getThoughtsByHashtag(tag, c);
-      if (c) {
+      if (c !== undefined) {
         setThoughts(prev => [...prev, ...res.data]);
       } else {
         setThoughts(res.data);
@@ -45,7 +45,7 @@ export default function HashtagPage() {
         ))}
       </div>
       {loading && <p className="text-center text-gray-400 py-4">Loading...</p>}
-      {!loading && hasMore && cursor && (
+      {!loading && hasMore && cursor !== null && (
         <button onClick={() => loadThoughts(cursor)} className="w-full py-3 text-indigo-500 hover:text-indigo-600 mt-4">
           Load more
         </button>

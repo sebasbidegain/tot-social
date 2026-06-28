@@ -53,7 +53,7 @@ export default function MainLayout() {
                 </span>
               )}
             </NavLink>
-            <NavLink to="/notifications" className={({ isActive }) => `relative ${navLinkClass({ isActive })}`}>
+            <NavLink to="/notifications" className={({ isActive }) => `relative ${navLinkClass({ isActive })}`} aria-label="Notifications">
               🔔
               {notifCount > 0 && (
                 <span className="absolute -top-1.5 -right-2.5 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
@@ -61,7 +61,7 @@ export default function MainLayout() {
                 </span>
               )}
             </NavLink>
-            <NavLink to="/messages" className={({ isActive }) => `relative ${navLinkClass({ isActive })}`}>
+            <NavLink to="/messages" className={({ isActive }) => `relative ${navLinkClass({ isActive })}`} aria-label="Messages">
               ✉
               {msgCount > 0 && (
                 <span className="absolute -top-1.5 -right-2.5 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
@@ -71,12 +71,13 @@ export default function MainLayout() {
             </NavLink>
             {user && (
               <>
+                <NavLink to="/settings" className={navLinkClass} title="Settings">⚙</NavLink>
                 <NavLink to={`/profile/${user.username}`} className="text-gray-600 hover:text-gray-900">
                   {user.avatar_url ? (
                     <img src={user.avatar_url} alt="" className="w-8 h-8 rounded-full object-cover" />
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-medium text-sm">
-                      {user.display_name[0]?.toUpperCase()}
+                      {(user.display_name || user.username)[0]?.toUpperCase()}
                     </div>
                   )}
                 </NavLink>
@@ -97,13 +98,13 @@ export default function MainLayout() {
       {/* Mobile bottom nav */}
       <nav className="fixed bottom-0 inset-x-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 md:hidden">
         <div className="flex justify-around py-2">
-          <NavLink to="/" className={({ isActive }) => `text-sm ${isActive ? 'text-indigo-600' : 'text-gray-500 dark:text-gray-400'}`}>
+          <NavLink to="/" className={({ isActive }) => `text-sm ${isActive ? 'text-indigo-600' : 'text-gray-500 dark:text-gray-400'}`} aria-label="Feed">
             Feed
           </NavLink>
-          <NavLink to="/explore" className={({ isActive }) => `text-sm ${isActive ? 'text-indigo-600' : 'text-gray-500 dark:text-gray-400'}`}>
-            Explore
+          <NavLink to="/search" className={({ isActive }) => `text-sm ${isActive ? 'text-indigo-600' : 'text-gray-500 dark:text-gray-400'}`} aria-label="Search">
+            🔍
           </NavLink>
-          <NavLink to="/notifications" className={({ isActive }) => `relative text-sm ${isActive ? 'text-indigo-600' : 'text-gray-500 dark:text-gray-400'}`}>
+          <NavLink to="/notifications" className={({ isActive }) => `relative text-sm ${isActive ? 'text-indigo-600' : 'text-gray-500 dark:text-gray-400'}`} aria-label="Notifications">
             🔔
             {notifCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center">
@@ -111,7 +112,7 @@ export default function MainLayout() {
               </span>
             )}
           </NavLink>
-          <NavLink to="/messages" className={({ isActive }) => `relative text-sm ${isActive ? 'text-indigo-600' : 'text-gray-500 dark:text-gray-400'}`}>
+          <NavLink to="/messages" className={({ isActive }) => `relative text-sm ${isActive ? 'text-indigo-600' : 'text-gray-500 dark:text-gray-400'}`} aria-label="Messages">
             ✉
             {msgCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center">
@@ -119,9 +120,11 @@ export default function MainLayout() {
               </span>
             )}
           </NavLink>
-          <NavLink to="/bookmarks" className={({ isActive }) => `text-sm ${isActive ? 'text-indigo-600' : 'text-gray-500 dark:text-gray-400'}`}>
-            ☆
-          </NavLink>
+          {user && (
+            <NavLink to={`/profile/${user.username}`} className={({ isActive }) => `text-sm ${isActive ? 'text-indigo-600' : 'text-gray-500 dark:text-gray-400'}`} aria-label="Profile">
+              👤
+            </NavLink>
+          )}
         </div>
       </nav>
     </div>

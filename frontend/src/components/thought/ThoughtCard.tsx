@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import type { Thought } from '../../types';
 import { timeAgo } from '../../utils/formatDate';
 import { toggleLike, editThought } from '../../api/thoughts';
@@ -19,6 +20,7 @@ interface Props {
 
 export default function ThoughtCard({ thought, onDelete, currentUserId, isThreadItem }: Props) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [liked, setLiked] = useState(thought.is_liked);
   const [likeCount, setLikeCount] = useState(thought.like_count);
   const [bookmarked, setBookmarked] = useState(thought.is_bookmarked ?? false);
@@ -59,9 +61,9 @@ export default function ThoughtCard({ thought, onDelete, currentUserId, isThread
     setEditSaving(true);
     try {
       await editThought(thought.id, editContent.trim());
-      thought.content = editContent.trim();
-      thought.is_edited = true;
       setEditing(false);
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
+      queryClient.invalidateQueries({ queryKey: ['thought', thought.id] });
     } catch { /* keep editing open */ }
     finally { setEditSaving(false); }
   }
